@@ -1,20 +1,18 @@
 # Review flags
 
-Items flagged for human or adjunct review. Auto-generated during bank build.
+## Coverage model (updated)
 
-## Chapter 1
+Every textbook exercise now has **3 bank items** (intro / practice / challenge), each tagged with the exact exercise number. Coverage gaps in the dashboard should be empty when the build succeeds.
 
-- **1.3 / 1.4 Venn diagrams**: First parameterized SVG templates — verify shading matches textbook conventions.
-- **1.5 three-set Venns**: SVG generator not yet built; items use region descriptions only.
+## Still needs adjunct review
 
-## Auto-generated sections (2.1+)
+- **Stems synthesized from PDF families** — calculation exercises (especially 5+) often have math stripped from PDFs; stems are parameterized templates, not verbatim book wording.
+- **Answer key** — used where extracted; many sections have sparse AK text in PDF extraction.
+- **Figure / Venn items** — inline SVG templates; verify against textbook diagrams.
+- **Section 1.1 pilot pool** — 154 extra deep variants appended (pattern-tagged); may overlap exercise families.
+- **Exercise counts from chapter PDFs** — bleed between sections is filtered heuristically; spot-check edge sections (e.g. 1.2, 3.3).
 
-- All auto-generated items default to `needs_review`.
-- Exercise stems may not match verbatim textbook wording (PDF math extraction is lossy).
-- Figure-dependent families flagged `manual_rebuild` for Canvas.
-- Category B real-world facts not individually verified in auto pass.
+## Canvas
 
-## General
-
-- Bloom levels assigned per topic family using heuristics — not individually validated.
-- `qti_support_level: manual_rebuild` on diagram-heavy items until QTI pipeline is rebuilt.
+- `manual_rebuild` — diagram-heavy items
+- `requires_conversion` — short answer with multiple acceptable forms

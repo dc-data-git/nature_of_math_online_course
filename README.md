@@ -21,7 +21,7 @@ Open http://localhost:8080/dashboard.html
 
 | Path | Purpose |
 |---|---|
-| `bank.json` | Canonical problem bank (all sections) |
+| `bank.json` | Canonical problem bank — **3 items per textbook exercise** (intro / practice / challenge) |
 | `dashboard_data.json` | Precomputed view data for the dashboard |
 | `dashboard.html` | Human-readable bank browser |
 | `schema/problem.schema.json` | Item JSON schema |
