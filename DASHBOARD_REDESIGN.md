@@ -21,6 +21,10 @@ Open http://localhost:8080/dashboard.html
 - Bloom filter under "Advanced filters"
 - Item viewer: serif stem, difficulty chips, Reviewer vs Student preview toggle
 - Collapsible answer key
+- **Warm linen palette** (stone/cream surfaces — not apartment-white)
+- Subtle **dot + grid geometry** on page background; triangles/circles in header
+- Geometric **logo mark** beside title; accent bar under header
+- Topic cards with faint triangle watermark; problem card on warm paper with left accent
 
 ## Merge or discard
 
