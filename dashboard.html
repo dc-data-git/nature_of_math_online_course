@@ -3,96 +3,471 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Problem Bank Dashboard</title>
+<title>Nature of Math — Problem Bank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #1b1f27; --muted: #6b7280; --line: #e3e6ea; --bg: #f7f8fa; --card: #ffffff;
-    --accent: #2f6fed; --accent-soft: #eaf1ff; --good: #1a8a5f; --good-soft: #e5f6ef;
-    --warn: #b45309; --warn-soft: #fdf1e0; --param: #d7263d; --param-soft: #fde8ea;
-    --bloom: #6d28d9; --bloom-soft: #efe7fc;
+    --ink: #141820;
+    --muted: #5c6578;
+    --line: #e2e6ee;
+    --bg: #f4f6fa;
+    --card: #ffffff;
+    --accent: #1d5bb8;
+    --accent-hover: #164a96;
+    --accent-soft: #e8f0fc;
+    --good: #0d7a52;
+    --good-soft: #e3f5ed;
+    --warn: #9a6700;
+    --warn-soft: #faf0d7;
+    --param: #c41e3a;
+    --param-soft: #fde8ec;
+    --radius: 12px;
+    --shadow: 0 1px 3px rgba(20, 24, 32, .06), 0 4px 12px rgba(20, 24, 32, .04);
   }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.45; }
-  header { padding: 20px 28px; background: var(--card); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-  header h1 { font-size: 18px; margin: 0; }
-  header .meta { color: var(--muted); font-size: 13px; }
-  footer { padding: 16px 28px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); background: var(--card); }
-  select { font-size: 14px; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line); background: #fff; }
-  .layout { display: grid; grid-template-columns: 280px 1fr; gap: 0; min-height: calc(100vh - 120px); }
-  nav { border-right: 1px solid var(--line); background: var(--card); padding: 18px; overflow-y: auto; }
-  nav h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 18px 0 8px; }
-  nav h2:first-child { margin-top: 0; }
-  .lo-item, .bloom-item, .gap-banner { display: block; width: 100%; text-align: left; background: none; border: none; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--ink); margin-bottom: 2px; }
-  .lo-item:hover, .lo-item.active { background: var(--accent-soft); color: var(--accent); }
-  .bloom-item:hover, .bloom-item.active { background: var(--bloom-soft); color: var(--bloom); }
-  .lo-item .count, .bloom-item .count { float: right; color: var(--muted); font-size: 12px; }
-  .gap-banner, .review-banner { background: var(--warn-soft); color: var(--warn); font-size: 12.5px; padding: 8px 10px; border-radius: 8px; margin-top: 6px; cursor: default; }
-  main { padding: 24px 28px; overflow-y: auto; }
-  .topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
-  .topic-card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; cursor: pointer; transition: box-shadow .12s, border-color .12s; }
-  .topic-card:hover { border-color: var(--accent); box-shadow: 0 2px 10px rgba(47,111,237,.12); }
-  .topic-card h3 { font-size: 14.5px; margin: 0 0 6px; }
-  .topic-card .sub { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
-  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; margin-right: 5px; margin-bottom: 4px; font-weight: 600; }
-  .badge.approved { background: var(--good-soft); color: var(--good); }
-  .badge.needs_review { background: var(--warn-soft); color: var(--warn); }
-  .badge.fmt { background: #eef0f3; color: #444; font-weight: 500; }
-  .badge.bloom { background: var(--bloom-soft); color: var(--bloom); }
-  .strategy-note { font-size: 11.5px; color: var(--muted); margin-top: 8px; font-style: italic; }
-  .viewer { max-width: 780px; }
-  .viewer .back { background: none; border: none; color: var(--accent); font-size: 13px; cursor: pointer; padding: 0; margin-bottom: 14px; }
-  .viewer h2 { font-size: 17px; margin: 0 0 4px; }
-  .viewer .sub { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px; }
-  .stem { font-size: 16px; white-space: pre-wrap; margin-bottom: 16px; }
-  .diagram { margin-bottom: 16px; }
+  body {
+    margin: 0;
+    font-family: "DM Sans", -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    font-size: 15px;
+  }
+
+  /* —— Header —— */
+  .site-header {
+    background: linear-gradient(180deg, #fff 0%, #fafbfd 100%);
+    border-bottom: 1px solid var(--line);
+    padding: 0 28px;
+  }
+  .site-header-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 18px 0 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .brand h1 {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .brand .subtitle {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+  .brand .attribution {
+    margin-top: 6px;
+    font-size: 0.75rem;
+    color: #8b93a7;
+  }
+  .header-stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .stat-pill {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .stat-pill strong { color: var(--ink); font-weight: 600; }
+  .stat-pill.coverage-ok { background: var(--good-soft); border-color: #b8e6d4; color: var(--good); }
+  .stat-pill.coverage-warn { background: var(--warn-soft); border-color: #ecd9a8; color: var(--warn); }
+
+  /* —— Layout —— */
+  .shell {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 140px);
+  }
+
+  /* —— Sidebar —— */
+  .sidebar {
+    padding: 20px 16px 24px 28px;
+    border-right: 1px solid var(--line);
+  }
+  .nav-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin: 0 0 10px;
+  }
+  .chapter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .chapter-btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--card);
+    font-family: inherit;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .12s;
+  }
+  .chapter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .chapter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .section-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 42vh;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding-right: 4px;
+  }
+  .section-btn {
+    text-align: left;
+    width: 100%;
+    border: none;
+    background: none;
+    padding: 9px 10px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.8125rem;
+    color: var(--ink);
+    cursor: pointer;
+    line-height: 1.35;
+  }
+  .section-btn:hover { background: var(--accent-soft); }
+  .section-btn.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .section-btn .sec-id { font-weight: 600; margin-right: 4px; }
+  .section-btn .sec-meta { display: block; font-size: 0.6875rem; color: var(--muted); margin-top: 2px; font-weight: 400; }
+
+  .alert-compact {
+    font-size: 0.75rem;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+  .alert-compact.review { background: var(--warn-soft); color: #7a5a00; }
+  .alert-compact.gap { background: #fde8e8; color: #9b1c1c; }
+
+  details.advanced { margin-top: 8px; }
+  details.advanced summary {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 8px 0;
+    list-style: none;
+  }
+  details.advanced summary::-webkit-details-marker { display: none; }
+  .bloom-item {
+    display: block; width: 100%; text-align: left; border: none; background: none;
+    padding: 7px 10px; border-radius: 8px; font-family: inherit; font-size: 0.8125rem;
+    cursor: pointer; color: var(--ink);
+  }
+  .bloom-item:hover, .bloom-item.active { background: #f0ebfc; color: #5b21b6; }
+
+  /* —— Main —— */
+  .main {
+    padding: 24px 28px 40px 24px;
+    overflow-y: auto;
+  }
+  .section-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .section-bar h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .section-bar .bar-meta { font-size: 0.8125rem; color: var(--muted); }
+
+  .topic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .topic-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: box-shadow .15s, border-color .15s, transform .15s;
+    box-shadow: var(--shadow);
+  }
+  .topic-card:hover {
+    border-color: #c5d4f0;
+    box-shadow: 0 4px 16px rgba(29, 91, 184, .1);
+    transform: translateY(-1px);
+  }
+  .topic-card h3 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .topic-card .topic-meta {
+    font-size: 0.8125rem;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .topic-card .topic-foot {
+    font-size: 0.75rem;
+    color: #8b93a7;
+    font-style: italic;
+  }
+  .chip {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: #eef1f6;
+    color: var(--muted);
+  }
+  .chip.review { background: var(--warn-soft); color: var(--warn); }
+
+  /* —— Item viewer —— */
+  .viewer { max-width: 720px; }
+  .back-link {
+    border: none; background: none; padding: 0; margin-bottom: 16px;
+    font-family: inherit; font-size: 0.875rem; color: var(--accent);
+    cursor: pointer; font-weight: 500;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .viewer-head { margin-bottom: 20px; }
+  .viewer-head h2 { margin: 0 0 6px; font-size: 1.2rem; font-weight: 700; }
+  .viewer-head .sub { color: var(--muted); font-size: 0.875rem; }
+
+  .preview-toggle {
+    display: flex;
+    gap: 0;
+    margin-bottom: 16px;
+    background: #eef1f6;
+    border-radius: 8px;
+    padding: 3px;
+    width: fit-content;
+  }
+  .preview-toggle button {
+    border: none;
+    background: none;
+    padding: 7px 16px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .preview-toggle button.active {
+    background: var(--card);
+    color: var(--ink);
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  }
+
+  .problem-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .problem-card .stem-wrap {
+    padding: 28px 28px 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .problem-card .stem-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .stem {
+    font-family: "Source Serif 4", Georgia, serif;
+    font-size: 1.125rem;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    color: var(--ink);
+  }
+  .diagram { margin-bottom: 20px; text-align: center; padding: 12px; background: #fafbfd; border-radius: 8px; }
   .diagram svg { max-width: 100%; height: auto; }
-  mark.param { background: var(--param-soft); color: var(--param); font-weight: 700; border-radius: 4px; padding: 0 3px; }
-  .legend { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
-  .answer-block { background: var(--good-soft); border-radius: 10px; padding: 10px 14px; font-size: 13.5px; margin-top: 14px; }
-  .answer-block b { color: var(--good); }
-  .options-list { margin: 10px 0 0; padding-left: 18px; font-size: 13.5px; }
+  mark.param {
+    background: var(--param-soft);
+    color: var(--param);
+    font-weight: 600;
+    border-radius: 3px;
+    padding: 0 4px;
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.95em;
+  }
+  .param-legend {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 14px;
+  }
+
+  .answer-panel {
+    padding: 16px 28px;
+    background: #fafbfd;
+  }
+  .answer-panel.hidden { display: none; }
+  .answer-panel summary {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--good);
+    cursor: pointer;
+    list-style: none;
+  }
+  .answer-panel summary::-webkit-details-marker { display: none; }
+  .answer-body {
+    margin-top: 10px;
+    padding: 12px 16px;
+    background: var(--good-soft);
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    color: #0a5c3e;
+  }
+  .options-list { margin: 12px 0 0; padding-left: 20px; }
+  .options-list li { margin-bottom: 4px; }
   .options-list li.correct { color: var(--good); font-weight: 600; }
-  .item-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
-  .actions { margin-top: 18px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-  button.primary { background: var(--accent); color: #fff; border: none; padding: 9px 16px; border-radius: 8px; font-size: 13.5px; cursor: pointer; font-weight: 600; }
-  button.primary:hover { background: #2559c2; }
-  .item-id { color: var(--muted); font-size: 12px; }
-  .empty-state, .loading { color: var(--muted); font-size: 14px; padding: 40px 0; text-align: center; }
-  .error { color: #b91c1c; padding: 20px; }
-  @media (max-width: 800px) { .layout { grid-template-columns: 1fr; } nav { border-right: none; border-bottom: 1px solid var(--line); } }
+
+  .problem-footer {
+    padding: 16px 28px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .meta-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .meta-chip {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: #eef1f6;
+    color: var(--muted);
+    text-transform: capitalize;
+  }
+  .meta-chip.diff-intro { background: #e8f5e9; color: #2e7d32; }
+  .meta-chip.diff-practice { background: #e3f2fd; color: #1565c0; }
+  .meta-chip.diff-challenge { background: #fce4ec; color: #c62828; }
+  .meta-chip.canvas-flag { background: #fff3e0; color: #e65100; }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .item-ref { font-size: 0.75rem; color: var(--muted); }
+
+  .site-footer {
+    text-align: center;
+    padding: 16px;
+    font-size: 0.75rem;
+    color: #8b93a7;
+    border-top: 1px solid var(--line);
+    background: var(--card);
+  }
+  .loading, .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+  .error { color: #b91c1c; padding: 24px; }
+
+  .preview-mode .answer-panel,
+  .preview-mode .param-legend { display: none !important; }
+
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: 1fr; }
+    .sidebar { border-right: none; border-bottom: 1px solid var(--line); padding: 16px 20px; }
+    .section-list { max-height: 200px; }
+  }
 </style>
 </head>
 <body>
-<header>
-  <h1>Problem Bank Dashboard</h1>
-  <select id="sectionSelect" disabled><option>Loading…</option></select>
-  <span class="meta" id="sectionMeta"></span>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <div class="brand">
+      <h1>Nature of Math</h1>
+      <p class="subtitle">Contemporary Mathematics — Problem Bank</p>
+      <p class="attribution">Content adapted from OpenStax (CC BY 4.0)</p>
+    </div>
+    <div class="header-stats" id="headerStats"></div>
+  </div>
 </header>
-<div class="layout">
-  <nav>
-    <h2>Learning Objectives</h2>
-    <div id="loList"></div>
-    <h2>Bloom's Level</h2>
-    <div id="bloomList"></div>
-    <div id="gapBanner"></div>
-    <div id="reviewBanner"></div>
-  </nav>
-  <main id="main"><div class="loading">Loading problem bank…</div></main>
+
+<div class="shell">
+  <aside class="sidebar">
+    <p class="nav-label">Chapter</p>
+    <div class="chapter-row" id="chapterRow"></div>
+    <p class="nav-label">Section</p>
+    <div class="section-list" id="sectionList"></div>
+    <div id="sidebarAlerts"></div>
+    <details class="advanced">
+      <summary>Advanced filters ▸</summary>
+      <div id="bloomList" style="margin-top:8px"></div>
+    </details>
+  </aside>
+  <main class="main" id="main">
+    <div class="loading">Loading problem bank…</div>
+  </main>
 </div>
-<footer id="footer">Content adapted from OpenStax Contemporary Mathematics (CC BY 4.0).</footer>
+
+<footer class="site-footer">For instructor review — not student-facing</footer>
+
 <script>
 let DATA = null;
+let currentChapter = 1;
 let currentSectionId = null;
-let activeLO = null, activeBloom = null, currentTopic = null, currentItemIndex = 0;
+let activeBloom = null;
+let currentTopic = null;
+let currentItemIndex = 0;
+let previewMode = false;
 
-const sectionSelect = document.getElementById('sectionSelect');
-const sectionMeta = document.getElementById('sectionMeta');
-const loList = document.getElementById('loList');
-const bloomList = document.getElementById('bloomList');
-const gapBanner = document.getElementById('gapBanner');
-const reviewBanner = document.getElementById('reviewBanner');
 const main = document.getElementById('main');
+const chapterRow = document.getElementById('chapterRow');
+const sectionList = document.getElementById('sectionList');
+const bloomList = document.getElementById('bloomList');
+const sidebarAlerts = document.getElementById('sidebarAlerts');
+const headerStats = document.getElementById('headerStats');
 
 function section() { return DATA.sections[currentSectionId]; }
 
@@ -102,154 +477,239 @@ function escapeHtml(str) {
   return d.innerHTML;
 }
 
+function chapters() {
+  const ch = new Set();
+  Object.keys(DATA.sections).forEach(id => ch.add(parseInt(id.split('.')[0], 10)));
+  return [...ch].sort((a, b) => a - b);
+}
+
+function sectionsInChapter(ch) {
+  return Object.entries(DATA.sections)
+    .filter(([id]) => parseInt(id.split('.')[0], 10) === ch)
+    .sort((a, b) => {
+      const pa = a[0].split('.').map(Number), pb = b[0].split('.').map(Number);
+      return pa[1] - pb[1];
+    });
+}
+
 function init() {
-  sectionSelect.innerHTML = '';
-  const ids = Object.keys(DATA.sections).sort((a, b) => {
-    const pa = a.split('.').map(Number), pb = b.split('.').map(Number);
-    return pa[0] - pb[0] || pa[1] - pb[1];
-  });
-  ids.forEach(id => {
-    const s = DATA.sections[id];
-    const opt = document.createElement('option');
-    opt.value = id;
-    opt.textContent = `${s.title} (${s.total_items} items)`;
-    sectionSelect.appendChild(opt);
-  });
-  currentSectionId = ids[0];
-  sectionSelect.value = currentSectionId;
-  sectionSelect.disabled = false;
-  sectionSelect.onchange = () => {
-    currentSectionId = sectionSelect.value;
-    activeLO = activeBloom = null; currentTopic = null;
-    render();
-  };
+  const chs = chapters();
+  currentChapter = chs[0];
+  const first = sectionsInChapter(currentChapter);
+  currentSectionId = first[0][0];
+  renderChrome();
   render();
 }
 
-function render() {
-  const s = section();
-  sectionMeta.textContent = `${s.source} • ${s.license}`;
-  renderLOList(s); renderBloomList(s); renderGapBanner(s); renderReviewBanner(s);
-  if (currentTopic) renderViewer(s, currentTopic); else renderTopicGrid(s);
-}
-
-function renderLOList(s) {
-  loList.innerHTML = '';
-  const allBtn = document.createElement('button');
-  allBtn.className = 'lo-item' + (activeLO === null ? ' active' : '');
-  allBtn.innerHTML = `All topics <span class="count">${s.total_items}</span>`;
-  allBtn.onclick = () => { activeLO = null; currentTopic = null; render(); };
-  loList.appendChild(allBtn);
-  s.learning_objectives.forEach(lo => {
+function renderChrome() {
+  chapterRow.innerHTML = '';
+  chapters().forEach(ch => {
     const btn = document.createElement('button');
-    btn.className = 'lo-item' + (activeLO === lo.text ? ' active' : '');
-    btn.innerHTML = `${lo.text} <span class="count">${lo.count}</span>`;
-    btn.onclick = () => { activeLO = lo.text; currentTopic = null; render(); };
-    loList.appendChild(btn);
+    btn.className = 'chapter-btn' + (ch === currentChapter ? ' active' : '');
+    btn.textContent = ch;
+    btn.title = `Chapter ${ch}`;
+    btn.onclick = () => {
+      currentChapter = ch;
+      const secs = sectionsInChapter(ch);
+      currentSectionId = secs[0][0];
+      activeBloom = null; currentTopic = null;
+      renderChrome();
+      render();
+    };
+    chapterRow.appendChild(btn);
   });
-}
 
-function renderBloomList(s) {
+  sectionList.innerHTML = '';
+  sectionsInChapter(currentChapter).forEach(([id, s]) => {
+    const btn = document.createElement('button');
+    btn.dataset.id = id;
+    btn.className = 'section-btn' + (id === currentSectionId ? ' active' : '');
+    const shortTitle = s.title.replace(/^\d+\.\d+\s*/, '');
+    const cov = s.coverage_gaps.length ? '⚠ gaps' : '✓ full';
+    btn.innerHTML = `<span class="sec-id">${id}</span>${escapeHtml(shortTitle)}<span class="sec-meta">${s.total_exercises} exercises · ${s.total_items} items · ${cov}</span>`;
+    btn.onclick = () => {
+      currentSectionId = id;
+      activeBloom = null; currentTopic = null;
+      renderChrome();
+      render();
+    };
+    sectionList.appendChild(btn);
+  });
+
   bloomList.innerHTML = '';
-  const allBtn = document.createElement('button');
-  allBtn.className = 'bloom-item' + (activeBloom === null ? ' active' : '');
-  allBtn.innerHTML = `All levels <span class="count">${s.total_items}</span>`;
-  allBtn.onclick = () => { activeBloom = null; currentTopic = null; render(); };
-  bloomList.appendChild(allBtn);
+  const allB = document.createElement('button');
+  allB.className = 'bloom-item' + (activeBloom === null ? ' active' : '');
+  allB.textContent = 'All Bloom levels';
+  allB.onclick = () => { activeBloom = null; currentTopic = null; render(); };
+  bloomList.appendChild(allB);
+  const s = section();
   (s.bloom_levels || []).forEach(b => {
     const btn = document.createElement('button');
     btn.className = 'bloom-item' + (activeBloom === b.level ? ' active' : '');
+    btn.textContent = `${b.level} (${b.count})`;
     btn.title = b.label;
-    btn.innerHTML = `${b.level[0].toUpperCase()}${b.level.slice(1)} <span class="count">${b.count}</span>`;
     btn.onclick = () => { activeBloom = b.level; currentTopic = null; render(); };
     bloomList.appendChild(btn);
   });
 }
 
-function renderGapBanner(s) {
-  gapBanner.innerHTML = s.coverage_gaps.length
-    ? `<div class="gap-banner"><strong>Not yet covered</strong><br>Exercises #${s.coverage_gaps.join(', #')} of ${s.total_exercises} have no items yet.</div>` : '';
+function renderHeaderStats(s) {
+  const covClass = s.coverage_gaps.length ? 'coverage-warn' : 'coverage-ok';
+  const covText = s.coverage_gaps.length
+    ? `${s.coverage_gaps.length} gap(s)`
+  : 'Full coverage';
+  headerStats.innerHTML = `
+    <span class="stat-pill"><strong>${s.total_exercises}</strong> exercises</span>
+    <span class="stat-pill"><strong>${s.total_items}</strong> bank items</span>
+    <span class="stat-pill ${covClass}">${covText}</span>`;
 }
 
-function renderReviewBanner(s) {
-  reviewBanner.innerHTML = s.review_queue.length
-    ? `<div class="review-banner"><strong>${s.review_queue.length} item(s) need review</strong><br>Fact-check before classroom use.</div>` : '';
+function renderSidebarAlerts(s) {
+  sidebarAlerts.innerHTML = '';
+  if (s.coverage_gaps.length) {
+    const d = document.createElement('div');
+    d.className = 'alert-compact gap';
+    d.innerHTML = `<strong>Coverage gaps</strong><br>Exercises #${s.coverage_gaps.join(', #')} of ${s.total_exercises}`;
+    sidebarAlerts.appendChild(d);
+  }
+  if (s.review_queue.length) {
+    const d = document.createElement('div');
+    d.className = 'alert-compact review';
+    d.innerHTML = `<strong>Review status</strong><br>All ${s.review_queue.length} items in this section need fact-checking before classroom use.`;
+    sidebarAlerts.appendChild(d);
+  }
 }
 
 function filteredTopics(s) {
   let entries = Object.entries(s.topics);
-  if (activeLO) {
-    const lo = s.learning_objectives.find(l => l.text === activeLO);
-    if (lo) entries = entries.filter(([tid]) => lo.topics.includes(tid));
-  }
   if (activeBloom) entries = entries.filter(([, t]) => t.bloom_level === activeBloom);
   return entries;
 }
 
+function render() {
+  const s = section();
+  renderHeaderStats(s);
+  renderSidebarAlerts(s);
+  document.querySelectorAll('.section-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.id === currentSectionId);
+  });
+  if (currentTopic) renderViewer(s, currentTopic);
+  else renderTopicGrid(s);
+}
+
 function renderTopicGrid(s) {
   const entries = filteredTopics(s);
-  if (!entries.length) { main.innerHTML = '<div class="empty-state">No topics match this filter.</div>'; return; }
+  const bar = document.createElement('div');
+  bar.className = 'section-bar';
+  bar.innerHTML = `
+    <div>
+      <h2>${escapeHtml(s.title)}</h2>
+      <div class="bar-meta">${escapeHtml(s.source)}</div>
+    </div>`;
+  if (!entries.length) {
+    main.innerHTML = '';
+    main.appendChild(bar);
+    const empty = document.createElement('div');
+    empty.className = 'empty-state';
+    empty.textContent = 'No topics match the current filter.';
+    main.appendChild(empty);
+    return;
+  }
   const grid = document.createElement('div');
   grid.className = 'topic-grid';
   entries.forEach(([tid, t]) => {
     const card = document.createElement('div');
     card.className = 'topic-card';
-    const badges = Object.entries(t.status_counts).map(([st, n]) =>
-      `<span class="badge ${st}">${n} ${st.replace('_',' ')}</span>`).join('');
-    const fmtBadges = t.item_formats.map(f => `<span class="badge fmt">${f.replace('_',' ')}</span>`).join('');
-    card.innerHTML = `<h3>${escapeHtml(t.name)}</h3>
-      <div class="sub">Exercises ${escapeHtml(t.source_exercises)} • ${t.count} items</div>
-      <div><span class="badge bloom">${t.bloom_level}</span>${badges}${fmtBadges}</div>
-      <div class="strategy-note">${escapeHtml(t.strategy_label)}</div>`;
+    const needsReview = t.status_counts.needs_review || 0;
+    const chip = needsReview
+      ? `<span class="chip review">${needsReview} need review</span>`
+      : `<span class="chip">${t.count} items</span>`;
+    card.innerHTML = `
+      <h3>${escapeHtml(t.name)}</h3>
+      <div class="topic-meta">Exercises ${escapeHtml(t.source_exercises)}</div>
+      ${chip}
+      <div class="topic-foot">${escapeHtml(t.strategy_label)}</div>`;
     card.onclick = () => { currentTopic = tid; currentItemIndex = 0; render(); };
     grid.appendChild(card);
   });
-  main.innerHTML = ''; main.appendChild(grid);
+  main.innerHTML = '';
+  main.appendChild(bar);
+  main.appendChild(grid);
 }
 
 function renderViewer(s, tid) {
   const t = s.topics[tid];
   const item = t.items[currentItemIndex];
   const wrap = document.createElement('div');
-  wrap.className = 'viewer';
+  wrap.className = 'viewer' + (previewMode ? ' preview-mode' : '');
+
   const back = document.createElement('button');
-  back.className = 'back'; back.textContent = '← Back to topics';
+  back.className = 'back-link';
+  back.textContent = '← All topics in this section';
   back.onclick = () => { currentTopic = null; render(); };
   wrap.appendChild(back);
-  const h2 = document.createElement('h2'); h2.textContent = t.name; wrap.appendChild(h2);
-  const sub = document.createElement('div');
-  sub.className = 'sub';
-  sub.textContent = `Exercises ${t.source_exercises} • ${t.learning_objective}`;
-  wrap.appendChild(sub);
-  const card = document.createElement('div');
-  card.className = 'card';
+
+  const head = document.createElement('div');
+  head.className = 'viewer-head';
+  head.innerHTML = `<h2>${escapeHtml(t.name)}</h2><div class="sub">Exercise ${escapeHtml(item.source_exercise)}</div>`;
+  wrap.appendChild(head);
+
+  const toggle = document.createElement('div');
+  toggle.className = 'preview-toggle';
+  toggle.innerHTML = `
+    <button class="${previewMode ? '' : 'active'}" data-m="review">Reviewer</button>
+    <button class="${previewMode ? 'active' : ''}" data-m="student">Student preview</button>`;
+  toggle.querySelectorAll('button').forEach(btn => {
+    btn.onclick = () => {
+      previewMode = btn.dataset.m === 'student';
+      render();
+    };
+  });
+  wrap.appendChild(toggle);
+
   let optionsHtml = '';
   if (item.options) {
     optionsHtml = '<ul class="options-list">' + item.options.map(o =>
-      `<li class="${o === item.answer ? 'correct' : ''}">${escapeHtml(String(o))}${o === item.answer ? ' ✓' : ''}</li>`
+      `<li class="${!previewMode && o === item.answer ? 'correct' : ''}">${escapeHtml(String(o))}${!previewMode && o === item.answer ? ' ✓' : ''}</li>`
     ).join('') + '</ul>';
   }
-  const qtiBadge = item.qti_support_level && item.qti_support_level !== 'direct'
-    ? `<span class="badge fmt">Canvas: ${item.qti_support_level}</span>` : '';
+
+  const diff = item.difficulty || 'practice';
+  const diffClass = `diff-${diff}`;
+  const canvasChip = item.qti_support_level && item.qti_support_level !== 'direct'
+    ? `<span class="meta-chip canvas-flag">Canvas: ${item.qti_support_level.replace(/_/g, ' ')}</span>` : '';
+
+  const card = document.createElement('div');
+  card.className = 'problem-card';
   card.innerHTML = `
-    <div class="legend"><mark class="param">highlighted</mark> = parameterized value</div>
-    <div class="stem">${item.stem_html}</div>
-    ${optionsHtml}
-    <div class="answer-block"><b>Answer:</b> ${escapeHtml(String(item.answer))}</div>
-    <div class="item-meta">
-      <span class="badge ${item.status}">${item.status.replace('_',' ')}</span>
-      <span class="badge fmt">${item.item_format.replace('_',' ')}</span>
-      <span class="badge fmt">${item.generation_strategy}</span>
-      <span class="badge bloom">${item.bloom_level}</span>${qtiBadge}
+    <div class="stem-wrap">
+      <div class="stem-label">Question</div>
+      <div class="stem">${item.stem_html}</div>
+      ${optionsHtml}
+      <div class="param-legend"><mark class="param">highlighted</mark> text changes between generated instances</div>
     </div>
-    <div class="actions">
-      <button class="primary" id="nextBtn">Show another instance →</button>
-      <span class="item-id">${item.id} (${currentItemIndex + 1} of ${t.items.length})</span>
+    <details class="answer-panel" ${previewMode ? '' : 'open'}>
+      <summary>Answer key</summary>
+      <div class="answer-body">${escapeHtml(String(item.answer))}</div>
+    </details>
+    <div class="problem-footer">
+      <div class="meta-chips">
+        <span class="meta-chip ${diffClass}">${diff}</span>
+        <span class="meta-chip">${item.item_format.replace(/_/g, ' ')}</span>
+        <span class="meta-chip">${item.generation_strategy}</span>
+        ${canvasChip}
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <button class="btn-primary" id="nextBtn">Next instance →</button>
+        <span class="item-ref">${item.id}<br>${currentItemIndex + 1} of ${t.items.length}</span>
+      </div>
     </div>`;
   wrap.appendChild(card);
-  main.innerHTML = ''; main.appendChild(wrap);
+  main.innerHTML = '';
+  main.appendChild(wrap);
   document.getElementById('nextBtn').onclick = () => {
-    currentItemIndex = (currentItemIndex + 1) % t.items.length; render();
+    currentItemIndex = (currentItemIndex + 1) % t.items.length;
+    render();
   };
 }
 

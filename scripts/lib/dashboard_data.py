@@ -164,6 +164,7 @@ def build_dashboard_data(items: list[dict], section_meta: dict | None = None) ->
                     "status": it["status"],
                     "generation_strategy": it["generation_strategy"],
                     "bloom_level": it["bloom_level"],
+                    "difficulty": it.get("difficulty"),
                     "qti_support_level": it.get("qti_support_level", "direct"),
                     "source_exercise": it["source"]["exercise_number"],
                     "notes": it.get("notes"),
@@ -213,6 +214,7 @@ def build_dashboard_data(items: list[dict], section_meta: dict | None = None) ->
         chapter = group[0]["source"]["chapter"]
         sections_out[sid] = {
             "title": f"{sid} {title_map.get(sid, meta.get('title', ''))}".strip(),
+            "chapter": int(chapter) if str(chapter).isdigit() else chapter,
             "source": f"OpenStax Contemporary Mathematics, Chapter {chapter}",
             "license": "CC BY 4.0",
             "total_items": len(group),
