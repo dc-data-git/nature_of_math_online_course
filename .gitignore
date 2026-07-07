@@ -1,0 +1,7 @@
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+
+# Oversized source PDF; use the section/chapter splits in this repo instead.
+contemporary-mathematics_-_WEB.pdf

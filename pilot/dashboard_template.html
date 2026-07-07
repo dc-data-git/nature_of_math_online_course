@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Problem Bank Dashboard</title>
+<style>
+  :root {
+    --ink: #1b1f27;
+    --muted: #6b7280;
+    --line: #e3e6ea;
+    --bg: #f7f8fa;
+    --card: #ffffff;
+    --accent: #2f6fed;
+    --accent-soft: #eaf1ff;
+    --good: #1a8a5f;
+    --good-soft: #e5f6ef;
+    --warn: #b45309;
+    --warn-soft: #fdf1e0;
+    --param: #d7263d;
+    --param-soft: #fde8ea;
+    --bloom: #6d28d9;
+    --bloom-soft: #efe7fc;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.45;
+  }
+  header {
+    padding: 20px 28px; background: var(--card); border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  }
+  header h1 { font-size: 18px; margin: 0; }
+  header .meta { color: var(--muted); font-size: 13px; }
+  select {
+    font-size: 14px; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line);
+    background: #fff; color: var(--ink);
+  }
+  .layout { display: grid; grid-template-columns: 280px 1fr; gap: 0; min-height: calc(100vh - 73px); }
+  nav {
+    border-right: 1px solid var(--line); background: var(--card); padding: 18px;
+    overflow-y: auto;
+  }
+  nav h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 18px 0 8px; }
+  nav h2:first-child { margin-top: 0; }
+  .lo-item, .gap-banner {
+    display: block; width: 100%; text-align: left; background: none; border: none;
+    padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .lo-item:hover, .lo-item.active { background: var(--accent-soft); color: var(--accent); }
+  .lo-item .count { float: right; color: var(--muted); font-size: 12px; }
+  .gap-banner {
+    background: var(--warn-soft); color: var(--warn); font-size: 12.5px; margin-top: 6px;
+    cursor: default;
+  }
+  .review-banner {
+    background: var(--warn-soft); color: var(--warn); font-size: 12.5px; padding: 8px 10px;
+    border-radius: 8px; margin-top: 6px;
+  }
+  main { padding: 24px 28px; overflow-y: auto; }
+  .topic-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px;
+  }
+  .topic-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px;
+    cursor: pointer; transition: box-shadow .12s, border-color .12s;
+  }
+  .topic-card:hover { border-color: var(--accent); box-shadow: 0 2px 10px rgba(47,111,237,.12); }
+  .topic-card h3 { font-size: 14.5px; margin: 0 0 6px; }
+  .topic-card .sub { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+  .badge {
+    display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px;
+    margin-right: 5px; margin-bottom: 4px; font-weight: 600;
+  }
+  .badge.approved { background: var(--good-soft); color: var(--good); }
+  .badge.needs_review { background: var(--warn-soft); color: var(--warn); }
+  .badge.fmt { background: #eef0f3; color: #444; font-weight: 500; }
+  .badge.bloom { background: var(--bloom-soft); color: var(--bloom); }
+  .strategy-note { font-size: 11.5px; color: var(--muted); margin-top: 8px; font-style: italic; }
+
+  .bloom-item {
+    display: block; width: 100%; text-align: left; background: none; border: none;
+    padding: 7px 10px; border-radius: 8px; cursor: pointer; font-size: 12.5px; color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .bloom-item:hover, .bloom-item.active { background: var(--bloom-soft); color: var(--bloom); }
+  .bloom-item .count { float: right; color: var(--muted); font-size: 12px; }
+  .bloom-item.active .count { color: var(--bloom); }
+
+  .viewer { max-width: 780px; }
+  .viewer .back { background: none; border: none; color: var(--accent); font-size: 13px; cursor: pointer; padding: 0; margin-bottom: 14px; }
+  .viewer h2 { font-size: 17px; margin: 0 0 4px; }
+  .viewer .sub { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px;
+  }
+  .stem { font-size: 16px; white-space: pre-wrap; margin-bottom: 16px; }
+  mark.param {
+    background: var(--param-soft); color: var(--param); font-weight: 700; border-radius: 4px;
+    padding: 0 3px;
+  }
+  .legend { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+  .legend mark.param { padding: 0 4px; }
+  .answer-block { background: var(--good-soft); border-radius: 10px; padding: 10px 14px; font-size: 13.5px; margin-top: 14px; }
+  .answer-block b { color: var(--good); }
+  .options-list { margin: 10px 0 0; padding-left: 18px; font-size: 13.5px; }
+  .options-list li.correct { color: var(--good); font-weight: 600; }
+  .item-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .actions { margin-top: 18px; display: flex; gap: 10px; align-items: center; }
+  button.primary {
+    background: var(--accent); color: #fff; border: none; padding: 9px 16px; border-radius: 8px;
+    font-size: 13.5px; cursor: pointer; font-weight: 600;
+  }
+  button.primary:hover { background: #2559c2; }
+  .item-id { color: var(--muted); font-size: 12px; }
+  .empty-state { color: var(--muted); font-size: 14px; padding: 40px 0; text-align: center; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Problem Bank Dashboard</h1>
+  <select id="sectionSelect"></select>
+  <span class="meta" id="sectionMeta"></span>
+</header>
+
+<div class="layout">
+  <nav>
+    <h2>Learning Objectives</h2>
+    <div id="loList"></div>
+    <h2>Bloom's Level</h2>
+    <div id="bloomList"></div>
+    <div id="gapBanner"></div>
+    <div id="reviewBanner"></div>
+  </nav>
+  <main id="main"></main>
+</div>
+
+<script>
+const DATA = __DASHBOARD_DATA_JSON__;
+
+let currentSectionId = Object.keys(DATA.sections)[0];
+let activeLO = null;
+let activeBloom = null;
+let currentTopic = null;
+let currentItemIndex = 0;
+
+const sectionSelect = document.getElementById('sectionSelect');
+const sectionMeta = document.getElementById('sectionMeta');
+const loList = document.getElementById('loList');
+const bloomList = document.getElementById('bloomList');
+const gapBanner = document.getElementById('gapBanner');
+const reviewBanner = document.getElementById('reviewBanner');
+const main = document.getElementById('main');
+
+function section() { return DATA.sections[currentSectionId]; }
+
+function init() {
+  Object.entries(DATA.sections).forEach(([id, s]) => {
+    const opt = document.createElement('option');
+    opt.value = id; opt.textContent = `${s.title} (${s.total_items} items)`;
+    sectionSelect.appendChild(opt);
+  });
+  sectionSelect.value = currentSectionId;
+  sectionSelect.addEventListener('change', () => {
+    currentSectionId = sectionSelect.value;
+    activeLO = null; activeBloom = null; currentTopic = null;
+    render();
+  });
+  render();
+}
+
+function render() {
+  const s = section();
+  sectionMeta.textContent = `${s.source} • ${s.license}`;
+
+  renderLOList(s);
+  renderBloomList(s);
+  renderGapBanner(s);
+  renderReviewBanner(s);
+
+  if (currentTopic) {
+    renderViewer(s, currentTopic);
+  } else {
+    renderTopicGrid(s);
+  }
+}
+
+function renderLOList(s) {
+  loList.innerHTML = '';
+  const allBtn = document.createElement('button');
+  allBtn.className = 'lo-item' + (activeLO === null ? ' active' : '');
+  allBtn.innerHTML = `All topics <span class="count">${s.total_items}</span>`;
+  allBtn.onclick = () => { activeLO = null; currentTopic = null; render(); };
+  loList.appendChild(allBtn);
+
+  s.learning_objectives.forEach(lo => {
+    const btn = document.createElement('button');
+    btn.className = 'lo-item' + (activeLO === lo.text ? ' active' : '');
+    btn.innerHTML = `${lo.text} <span class="count">${lo.count}</span>`;
+    btn.onclick = () => { activeLO = lo.text; currentTopic = null; render(); };
+    loList.appendChild(btn);
+  });
+}
+
+function renderBloomList(s) {
+  bloomList.innerHTML = '';
+  const allBtn = document.createElement('button');
+  allBtn.className = 'bloom-item' + (activeBloom === null ? ' active' : '');
+  allBtn.innerHTML = `All levels <span class="count">${s.total_items}</span>`;
+  allBtn.onclick = () => { activeBloom = null; currentTopic = null; render(); };
+  bloomList.appendChild(allBtn);
+
+  s.bloom_levels.forEach(b => {
+    const btn = document.createElement('button');
+    btn.className = 'bloom-item' + (activeBloom === b.level ? ' active' : '');
+    btn.title = b.label;
+    btn.innerHTML = `${b.level[0].toUpperCase()}${b.level.slice(1)} <span class="count">${b.count}</span>`;
+    btn.onclick = () => { activeBloom = b.level; currentTopic = null; render(); };
+    bloomList.appendChild(btn);
+  });
+}
+
+function renderGapBanner(s) {
+  gapBanner.innerHTML = '';
+  if (s.coverage_gaps.length) {
+    const div = document.createElement('div');
+    div.className = 'gap-banner';
+    div.innerHTML = `<strong>Not yet covered</strong><br>Exercises #${s.coverage_gaps.join(', #')} of ${s.total_exercises} have no items yet.`;
+    gapBanner.appendChild(div);
+  }
+}
+
+function renderReviewBanner(s) {
+  reviewBanner.innerHTML = '';
+  if (s.review_queue.length) {
+    const div = document.createElement('div');
+    div.className = 'review-banner';
+    div.innerHTML = `<strong>${s.review_queue.length} item(s) need review</strong><br>Fact-check before classroom use.`;
+    reviewBanner.appendChild(div);
+  }
+}
+
+function filteredTopics(s) {
+  let entries = Object.entries(s.topics);
+  if (activeLO) {
+    const lo = s.learning_objectives.find(l => l.text === activeLO);
+    entries = entries.filter(([tid]) => lo.topics.includes(tid));
+  }
+  if (activeBloom) {
+    entries = entries.filter(([, t]) => t.bloom_level === activeBloom);
+  }
+  return entries;
+}
+
+function renderTopicGrid(s) {
+  const entries = filteredTopics(s);
+  if (!entries.length) {
+    main.innerHTML = '<div class="empty-state">No topics match this filter yet.</div>';
+    return;
+  }
+  const grid = document.createElement('div');
+  grid.className = 'topic-grid';
+  entries.forEach(([tid, t]) => {
+    const card = document.createElement('div');
+    card.className = 'topic-card';
+    const badges = Object.entries(t.status_counts).map(([st, n]) =>
+      `<span class="badge ${st}">${n} ${st.replace('_',' ')}</span>`).join('');
+    const fmtBadges = t.item_formats.map(f => `<span class="badge fmt">${f.replace('_',' ')}</span>`).join('');
+    const bloomBadge = `<span class="badge bloom">${t.bloom_level}</span>`;
+    card.innerHTML = `
+      <h3>${t.name}</h3>
+      <div class="sub">Exercises ${t.source_exercises} • ${t.count} items</div>
+      <div>${bloomBadge}${badges}${fmtBadges}</div>
+      <div class="strategy-note">${t.strategy_label}</div>
+    `;
+    card.onclick = () => { currentTopic = tid; currentItemIndex = 0; render(); };
+    grid.appendChild(card);
+  });
+  main.innerHTML = '';
+  main.appendChild(grid);
+}
+
+function renderViewer(s, tid) {
+  const t = s.topics[tid];
+  const item = t.items[currentItemIndex];
+
+  const wrap = document.createElement('div');
+  wrap.className = 'viewer';
+
+  const back = document.createElement('button');
+  back.className = 'back';
+  back.textContent = '← Back to topics';
+  back.onclick = () => { currentTopic = null; render(); };
+  wrap.appendChild(back);
+
+  const h2 = document.createElement('h2');
+  h2.textContent = t.name;
+  wrap.appendChild(h2);
+
+  const sub = document.createElement('div');
+  sub.className = 'sub';
+  sub.textContent = `Exercises ${t.source_exercises} • ${t.learning_objective} • ${t.strategy_label}`;
+  wrap.appendChild(sub);
+
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  let optionsHtml = '';
+  if (item.options) {
+    optionsHtml = '<ul class="options-list">' + item.options.map(o =>
+      `<li class="${o === item.answer ? 'correct' : ''}">${escapeHtml(String(o))}${o === item.answer ? ' ✓' : ''}</li>`
+    ).join('') + '</ul>';
+  }
+
+  card.innerHTML = `
+    <div class="legend"><mark class="param">highlighted</mark> = parameterized (changes every time this item is generated)</div>
+    <div class="stem">${item.stem_html}</div>
+    ${optionsHtml}
+    <div class="answer-block"><b>Answer:</b> ${escapeHtml(String(item.answer))}</div>
+    <div class="item-meta">
+      <span class="badge ${item.status}">${item.status.replace('_',' ')}</span>
+      <span class="badge fmt">${item.item_format.replace('_',' ')}</span>
+      <span class="badge fmt">${item.generation_strategy}</span>
+      <span class="badge bloom">${item.bloom_level}</span>
+    </div>
+    <div class="actions">
+      <button class="primary" id="nextBtn">Show another instance →</button>
+      <span class="item-id">${item.id} (${currentItemIndex + 1} of ${t.items.length})</span>
+    </div>
+  `;
+  wrap.appendChild(card);
+  main.innerHTML = '';
+  main.appendChild(wrap);
+
+  document.getElementById('nextBtn').onclick = () => {
+    currentItemIndex = (currentItemIndex + 1) % t.items.length;
+    render();
+  };
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+init();
+</script>
+</body>
+</html>

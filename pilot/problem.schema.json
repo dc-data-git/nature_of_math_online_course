@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.org/problem-bank/problem.schema.json",
+  "title": "Problem Bank Item",
+  "type": "object",
+  "required": [
+    "id", "origin", "source", "license", "question_type", "item_format",
+    "qti_support_level", "generation_strategy", "topic", "learning_objective",
+    "difficulty", "bloom_level", "stem", "answer", "status", "verification_method"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "parent_id": { "type": ["string", "null"] },
+    "origin": {
+      "enum": ["original", "algorithmic_variant", "templated_variant", "static_variant"]
+    },
+    "derivation_type": {
+      "enum": ["directly_adapted", "inspired_by", "independently_authored", null]
+    },
+    "source": {
+      "type": "object",
+      "required": ["book", "chapter", "section", "exercise_number"],
+      "properties": {
+        "book": { "type": "string" },
+        "chapter": { "type": ["integer", "string"] },
+        "section": { "type": "string" },
+        "exercise_number": { "type": "string" },
+        "page": { "type": ["integer", "null"] }
+      }
+    },
+    "license": {
+      "type": "object",
+      "required": ["type", "attribution_text"],
+      "properties": {
+        "type": { "type": "string" },
+        "attribution_text": { "type": "string" }
+      }
+    },
+    "question_type": {
+      "enum": [
+        "roster_construction", "set_builder_construction", "cardinality_numeric",
+        "classification_2choice", "classification_3choice", "open_response"
+      ]
+    },
+    "item_format": {
+      "enum": ["multiple_choice", "true_false", "numeric_entry", "short_answer", "essay"]
+    },
+    "qti_support_level": {
+      "enum": ["direct", "requires_conversion", "manual_rebuild", "not_qti_suitable"]
+    },
+    "generation_strategy": { "enum": ["algorithmic", "templated", "static"] },
+    "topic": { "type": "string" },
+    "learning_objective": { "type": "string" },
+    "difficulty": { "enum": ["intro", "practice", "challenge"] },
+    "bloom_level": {
+      "enum": ["remember", "understand", "apply", "analyze", "evaluate", "create"],
+      "description": "Revised Bloom's taxonomy level of the cognitive verb the item family tests. Rated per topic/group (see pipeline doc), not per individual item, since a family of items sharing a randomization_group is doing the same cognitive task."
+    },
+    "randomization_group": { "type": ["string", "null"] },
+    "reuse_risk": {
+      "enum": ["fresh_each_use", "static_low_risk", "static_searchable", null]
+    },
+    "stem": { "type": "string", "minLength": 1 },
+    "variables": { "type": ["object", "null"] },
+    "generator_ref": { "type": ["string", "null"] },
+    "answer": {},
+    "options": { "type": ["array", "null"] },
+    "distractor_rationale": { "type": ["array", "null"] },
+    "feedback": { "type": ["object", "null"] },
+    "media": { "type": "array" },
+    "status": { "enum": ["draft", "needs_review", "approved", "retired"] },
+    "verification_method": { "enum": ["computed", "llm_reviewed", "human_reviewed"] },
+    "notes": { "type": ["string", "null"] },
+    "created_at": { "type": "string" },
+    "created_by": { "type": "string" }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": { "properties": { "item_format": { "const": "multiple_choice" } } },
+      "then": { "required": ["options"] }
+    },
+    {
+      "if": { "properties": { "generation_strategy": { "const": "algorithmic" } } },
+      "then": { "properties": { "verification_method": { "const": "computed" } } }
+    }
+  ]
+}
